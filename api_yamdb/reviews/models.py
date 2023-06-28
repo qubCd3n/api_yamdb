@@ -136,3 +136,14 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
+from .validators import max_length_validator
+
+
+class Reviews(models.Model):
+    """Отзывы."""
+    pass
+
+
+class Comment(models.Model):
+    """Коментарий."""
+    pass
