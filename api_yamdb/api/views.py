@@ -88,3 +88,17 @@ class UserRegistrationViewSet(mixins.CreateModelMixin,
             recipient_list=(user.email,),
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class TokenReceiveViewSet():
+    serializer_class = TokenReceiveSerializer
+    pass
+
+
+class ReviewsViewSet():
+    serializer_class = ReviewSerializer
+    pass
+
+
+class CommentViewSet():
+    serializer_class = CommentSerializer
+    pass

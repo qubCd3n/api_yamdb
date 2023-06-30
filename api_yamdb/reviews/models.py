@@ -137,12 +137,11 @@ class Title(models.Model):
     def __str__(self):
         return self.name
 from .validators import max_length_validator
+from users.models import User
+from api_yamdb.settings import VALUE_MAX_VAL, VALUE_MIN_VAL
 
-VALUE_MIN_VAL = 1
-VALUE_MAX_VAL = 10
 
-
-class Reviews(models.Model):
+class Review(models.Model):
     """Отзыв к произведениям."""
     text = models.TextField('Отзыв')
     author = models.ForeignKey(
@@ -151,12 +150,12 @@ class Reviews(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Автор',
     )
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        related_name='reviews',
-        verbose_name='Произведение',
-    )
+    # title = models.ForeignKey(
+    # Title,
+    # on_delete=models.CASCADE,
+    #  related_name='reviews',
+    #  verbose_name='Произведение',
+   # )
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
     score = models.PositiveSmallIntegerField(
         'Рейтинг',
@@ -183,7 +182,7 @@ class Comment(models.Model):
         verbose_name='Автор',
     )
     review = models.ForeignKey(
-        Reviews,
+        Review,
         on_delete=models.CASCADE,
         related_name='comments',
         verbose_name='отзыв',
