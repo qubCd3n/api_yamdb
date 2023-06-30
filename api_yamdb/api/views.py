@@ -7,7 +7,10 @@ from .permissions import IsAdmin
 from .serializers import (
     UserRegistrationSerializer,
     UserSerializer,
-    TokenReceiveSerializer,)
+    TokenReceiveSerializer,
+    ReviewSerializer,
+    CommentSerializer,
+)
 
 
 User = get_user_model()
@@ -44,4 +47,14 @@ class UserRegistrationViewSet():
 
 class TokenReceiveViewSet():
     serializer_class = TokenReceiveSerializer
+    pass
+
+
+class ReviewsViewSet():
+    serializer_class = ReviewSerializer
+    pass
+
+
+class CommentViewSet():
+    serializer_class = CommentSerializer
     pass
