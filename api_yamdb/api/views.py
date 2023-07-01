@@ -15,7 +15,7 @@ from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
 
 from api_yamdb.settings import EMAIL
-
+from reviews.models import Category, Genre, Title
 
 
 User = get_user_model()
@@ -51,7 +51,6 @@ class TokenReceiveViewSet(mixins.CreateModelMixin,
     permission_classes = (permissions.AllowAny, )
     serializer_class = TokenReceiveSerializer
 
-
     def create(self, request):
         serializer = TokenReceiveSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -72,7 +71,6 @@ class UserRegistrationViewSet(mixins.CreateModelMixin,
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = (permissions.AllowAny,)
-
 
     def create(self, request):
         serializer = TokenReceiveSerializer(data=request.data)
