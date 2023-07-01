@@ -1,14 +1,15 @@
-from rest_framework import viewsets, status
 from django.contrib.auth import get_user_model
+from django.db.models import Avg
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import action
-from .permissions import IsAdmin
-from .serializers import (
-    UserRegistrationSerializer,
-    UserSerializer,
-    TokenReceiveSerializer,)
+from reviews.models import Category, Genre, Title
 
+from .permissions import IsAdmin, IsAdminOrReadOnly
+from .serializers import (CategorySerializer, GenreSerializer, TitleSerializer,
+                          TokenReceiveSerializer, UserRegistrationSerializer,
+                          UserSerializer)
 
 User = get_user_model()
 
@@ -45,3 +46,25 @@ class UserRegistrationViewSet():
 class TokenReceiveViewSet():
     serializer_class = TokenReceiveSerializer
     pass
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    """Вьюсет для Category."""
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+
+class GenreViewSet(viewsets.ModelViewSet):
+    """Вьюсет для Genre."""
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    """Вьюсет для Title."""
+    queryset = Title.objects.annotate(
+        rating=Avg('score')).order_by('rating')
+    serializer_class = TitleSerializer
+    permission_classes = [IsAdminOrReadOnly]
