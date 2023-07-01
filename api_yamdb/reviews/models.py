@@ -150,12 +150,12 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Автор',
     )
-    # title = models.ForeignKey(
-    # Title,
-    # on_delete=models.CASCADE,
-    #  related_name='reviews',
-    #  verbose_name='Произведение',
-   # )
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name='Произведение',
+    )
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
     score = models.PositiveSmallIntegerField(
         'Рейтинг',
