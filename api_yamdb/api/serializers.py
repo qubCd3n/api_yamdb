@@ -1,7 +1,7 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
-
+from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, ValidationError
+from reviews.models import Cathegory, Genre, Title
 
 User = get_user_model()
 
@@ -57,3 +57,37 @@ class TokenReceiveSerializer(serializers.Serializer):
     confirmation_code = serializers.CharField(
         required=True,
     )
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    """Серилиазатор Category."""
+
+    class Meta:
+        model = Cathegory
+        exlude = ['id']
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    """Серилиазатор Genre."""
+
+    class Meta:
+        model = Genre
+        exlude = ['id']
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    """Серилиазатор Title."""
+
+    categoty = CategorySerializer(read_only=True)
+    genre = GenreSerializer(many=True, read_only=True)
+    rating = serializers.FloatField(read_only=True)
+
+    class Meta:
+        model = Title
+        fields = (
+            'name',
+            'year',
+            'category',
+            'genre',
+            'description',
+        )
