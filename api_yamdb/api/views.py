@@ -1,9 +1,14 @@
 from django.contrib.auth import get_user_model
-from rest_framework import status, viewsets
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
+from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from reviews.models import Category, Genre, Title
+from rest_framework_simplejwt.tokens import AccessToken
+
+from api_yamdb.settings import EMAIL
 
 from .permissions import IsAdmin, IsAdminOrReadOnly
 from .serializers import (CategorySerializer, GenreSerializer, TitleSerializer,
@@ -18,7 +23,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated, IsAdmin)
     lookup_field = 'username'
-    filter_backends = ('username', )
+    filter_backends = (filters.SearchFilter, )
     http_method_names = ('get', 'post', 'patch', 'detele')
 
     @action(
@@ -37,32 +42,43 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UserRegistrationViewSet():
-    serializer_class = UserRegistrationSerializer
-    pass
-
-
-class TokenReceiveViewSet():
+class TokenReceiveViewSet(mixins.CreateModelMixin,
+                          viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    permission_classes = (permissions.AllowAny, )
     serializer_class = TokenReceiveSerializer
-    pass
+
+    def create(self, request):
+        serializer = TokenReceiveSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data['username']
+        confirmation_code = serializer.validated_data['confirmation_code']
+        user = get_object_or_404(User, username=username)
+        if default_token_generator.check_token(user, confirmation_code):
+            data = {'token': str(AccessToken.for_user(user))}
+            return Response(data, status=status.HTTP_200_OK)
+        return Response(
+            "wrong confirmation code",
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
-    """Вьюсет для Category."""
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    permission_classes = [IsAdminOrReadOnly]
+class UserRegistrationViewSet(mixins.CreateModelMixin,
+                              viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserRegistrationSerializer
+    permission_classes = (permissions.AllowAny,)
 
-
-class GenreViewSet(viewsets.ModelViewSet):
-    """Вьюсет для Genre."""
-    queryset = Genre.objects.all()
-    serializer_class = GenreSerializer
-    permission_classes = [IsAdminOrReadOnly]
-
-
-class TitleViewSet(viewsets.ModelViewSet):
-    """Вьюсет для Title."""
-    queryset = Title.objects.all()
-    serializer_class = TitleSerializer
-    permission_classes = [IsAdminOrReadOnly]
+    def create(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user, _ = User.objects.get_or_create(**serializer.validated_data)
+        confirmation_code = default_token_generator.make_token(user)
+        print(confirmation_code)
+        send_mail(
+            subject='Код подтверждения.',
+            message=f'Код подтверждения: {confirmation_code}',
+            from_email=EMAIL,
+            recipient_list=(user.email,),
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
