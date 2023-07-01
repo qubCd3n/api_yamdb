@@ -69,16 +69,28 @@ class UserRegistrationViewSet(mixins.CreateModelMixin,
     serializer_class = UserRegistrationSerializer
     permission_classes = (permissions.AllowAny,)
 
-    def create(self, request):
-        serializer = UserRegistrationSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user, _ = User.objects.get_or_create(**serializer.validated_data)
-        confirmation_code = default_token_generator.make_token(user)
-        print(confirmation_code)
-        send_mail(
-            subject='Код подтверждения.',
-            message=f'Код подтверждения: {confirmation_code}',
-            from_email=EMAIL,
-            recipient_list=(user.email,),
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class TokenReceiveViewSet():
+    serializer_class = TokenReceiveSerializer
+    pass
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    """Вьюсет для Category."""
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+
+class GenreViewSet(viewsets.ModelViewSet):
+    """Вьюсет для Genre."""
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    """Вьюсет для Title."""
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+    permission_classes = [IsAdminOrReadOnly]
