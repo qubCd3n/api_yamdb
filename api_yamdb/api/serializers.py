@@ -84,4 +84,10 @@ class TitleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = '__all__'
+        fields = (
+            'name',
+            'year',
+            'category',
+            'genre',
+            'description',
+        )
