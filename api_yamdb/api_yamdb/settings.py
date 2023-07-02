@@ -21,13 +21,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'reviews',
-    'api',
     'rest_framework',
     'rest_framework.authtoken',
     'api.apps.ApiConfig',
     'reviews.apps.ReviewsConfig',
     'users.apps.UsersConfig',
+    'reviews',
+    'api',
 ]
 
 
@@ -138,3 +138,4 @@ ROLES = (
 
 VALUE_MIN_VAL = 1
 VALUE_MAX_VAL = 10
+
