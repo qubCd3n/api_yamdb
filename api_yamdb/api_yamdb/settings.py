@@ -26,6 +26,8 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'reviews.apps.ReviewsConfig',
     'users.apps.UsersConfig',
+    'reviews',
+    'api',
 ]
 
 
@@ -133,3 +135,7 @@ ROLES = (
     (MODERATOR, 'moderator'),
     (ADMIN, 'admin'),
 )
+
+VALUE_MIN_VAL = 1
+VALUE_MAX_VAL = 10
+
