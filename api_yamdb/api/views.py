@@ -21,6 +21,7 @@ User = get_user_model()
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    """Вьюсет для User."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated, IsAdmin)
@@ -46,6 +47,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class TokenReceiveViewSet(mixins.CreateModelMixin,
                           viewsets.GenericViewSet):
+    """Вьюсет для Token."""
     queryset = User.objects.all()
     permission_classes = (permissions.AllowAny, )
     serializer_class = TokenReceiveSerializer
@@ -67,6 +69,7 @@ class TokenReceiveViewSet(mixins.CreateModelMixin,
 
 class UserRegistrationViewSet(mixins.CreateModelMixin,
                               viewsets.GenericViewSet):
+    """Вьюсет для UserRegistration."""
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = (permissions.AllowAny,)
@@ -121,8 +124,8 @@ class CommentViewSet():
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, review=self.get_review())
-        
-        
+  
+
 class CategoryViewSet(viewsets.ModelViewSet):
     """Вьюсет для Category."""
     queryset = Category.objects.all()
