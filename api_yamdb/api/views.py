@@ -87,21 +87,6 @@ class UserRegistrationViewSet(mixins.CreateModelMixin,
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class TokenReceiveViewSet():
-    
-    serializer.is_valid(raise_exception=True)
-    username = serializer.validated_data['username']
-    confirmation_code = serializer.validated_data['confirmation_code']
-    user = get_object_or_404(User, username=username)
-        if default_token_generator.check_token(user, confirmation_code):
-            data = {'token': str(AccessToken.for_user(user))}
-            return Response(data, status=status.HTTP_200_OK)
-       return Response(
-            "wrong confirmation code",
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-
 class ReviewsViewSet():
     """Вьюсет для ReviewSerializer."""
     serializer_class = ReviewSerializer
