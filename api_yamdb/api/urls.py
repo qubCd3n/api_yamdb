@@ -11,7 +11,7 @@ router.register('genres', GenreViewSet, basename= 'genres')
 router.register('titles', TitleViewSet, basename='titles')
 urlpatterns = [
     path('', include(router.urls)),
-    # path('auth/token/', TokenReceiveViewSet.as_view({'post': 'create'}),),
-    # path('auth/signup/',UserRegistrationViewSet.as_view({'post': 'create'}),),
+    path('auth/token/', TokenReceiveViewSet.as_view({'post': 'create'}),),
+    path('auth/signup/',UserRegistrationViewSet.as_view({'post': 'create'}),),
 
 ]

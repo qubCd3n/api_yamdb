@@ -1,4 +1,3 @@
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
@@ -22,6 +21,7 @@ User = get_user_model()
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    """Вьюсет для User."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated, IsAdmin)
@@ -47,6 +47,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class TokenReceiveViewSet(mixins.CreateModelMixin,
                           viewsets.GenericViewSet):
+    """Вьюсет для Token."""
     queryset = User.objects.all()
     permission_classes = (permissions.AllowAny, )
     serializer_class = TokenReceiveSerializer
@@ -68,6 +69,7 @@ class TokenReceiveViewSet(mixins.CreateModelMixin,
 
 class UserRegistrationViewSet(mixins.CreateModelMixin,
                               viewsets.GenericViewSet):
+    """Вьюсет для UserRegistration."""
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = (permissions.AllowAny,)
@@ -85,11 +87,6 @@ class UserRegistrationViewSet(mixins.CreateModelMixin,
             "wrong confirmation code",
             status=status.HTTP_400_BAD_REQUEST
         )
-
-
-class TokenReceiveViewSet():
-    serializer_class = TokenReceiveSerializer
-    pass
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
