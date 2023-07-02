@@ -1,7 +1,14 @@
-from django.contrib.auth import get_user_model
+
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, ValidationError
-from reviews.models import Cathegory, Genre, Title
+from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
+
+from rest_framework.serializers import ModelSerializer, ValidationError
+from users.models import User
+from reviews.models import Cathegory, Genre, Title, Comment, Review
+from api_yamdb.settings import VALUE_MAX_VAL, VALUE_MIN_VAL
+
 
 User = get_user_model()
 
@@ -91,3 +98,38 @@ class TitleSerializer(serializers.ModelSerializer):
             'genre',
             'description',
         )
+        
+        
+   class ReviewSerializer(serializers.ModelSerializer):
+    """Серилизатор Review."""
+    author = serializers.SlugRelatedField(
+        default=serializers.CurrentUserDefault(),
+        queryset=User.objects.all(),
+        slug_field='username'
+    )
+    score = serializers.IntegerField(
+        required=True,
+        validators=(
+            MaxValueValidator(VALUE_MAX_VAL),
+            MinValueValidator(VALUE_MIN_VAL))
+    )
+
+    class Meta:
+        model = Review
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
+        read_only_fields = ('title', 'author')
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """Серилизатор Comment."""
+    author = serializers.SlugRelatedField(
+        default=serializers.CurrentUserDefault(),
+        queryset=User.objects.all(),
+        slug_field='username'
+    )
+
+    class Meta:
+        model = Comment
+        read_only_fields = ('author', 'review')
+        exclude = ('review',)     
+

@@ -1,21 +1,20 @@
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, filters, mixins, permissions
 from rest_framework.decorators import action
-from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthenticated
+from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminOrModeratorOrOwnerOrReadOnly
 from .serializers import (CategorySerializer, GenreSerializer, TitleSerializer,
                           TokenReceiveSerializer, UserRegistrationSerializer,
-                          UserSerializer)
+                          UserSerializer, ReviewSerializer, CommentSerializer,)
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
 
 from api_yamdb.settings import EMAIL
-from reviews.models import Category, Genre, Title
+from reviews.models import Category, Genre, Title, Review
 
 
 User = get_user_model()
@@ -73,25 +72,72 @@ class UserRegistrationViewSet(mixins.CreateModelMixin,
     permission_classes = (permissions.AllowAny,)
 
     def create(self, request):
-        serializer = TokenReceiveSerializer(data=request.data)
+
+        serializer = UserRegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        username = serializer.validated_data['username']
-        confirmation_code = serializer.validated_data['confirmation_code']
-        user = get_object_or_404(User, username=username)
+        user, _ = User.objects.get_or_create(**serializer.validated_data)
+        confirmation_code = default_token_generator.make_token(user)
+        print(confirmation_code)
+        send_mail(
+            subject='Код подтверждения.',
+            message=f'Код подтверждения: {confirmation_code}',
+            from_email=EMAIL,
+            recipient_list=(user.email,),
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class TokenReceiveViewSet():
+    
+    serializer.is_valid(raise_exception=True)
+    username = serializer.validated_data['username']
+    confirmation_code = serializer.validated_data['confirmation_code']
+    user = get_object_or_404(User, username=username)
         if default_token_generator.check_token(user, confirmation_code):
             data = {'token': str(AccessToken.for_user(user))}
             return Response(data, status=status.HTTP_200_OK)
-        return Response(
+       return Response(
             "wrong confirmation code",
             status=status.HTTP_400_BAD_REQUEST
         )
 
 
-class TokenReceiveViewSet():
-    serializer_class = TokenReceiveSerializer
-    pass
+class ReviewsViewSet():
+    """Вьюсет для ReviewSerializer."""
+    serializer_class = ReviewSerializer
+    permission_classes = (
+        IsAdminOrModeratorOrOwnerOrReadOnly, IsAuthenticatedOrReadOnly,
+    )
+
+    def get_title(self):
+        title_id = self.kwargs.get('title_id')
+        return get_object_or_404(Title, id=title_id)
+
+    def get_queryset(self):
+        return self.get_title().reviews.all()
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user, title=self.get_title())
 
 
+class CommentViewSet():
+    """Вьюсет для CommentSerializer."""
+    serializer_class = CommentSerializer
+    permission_classes = (
+        IsAdminOrModeratorOrOwnerOrReadOnly, IsAuthenticatedOrReadOnly,
+    )
+
+    def get_review(self):
+        review_id = self.kwargs.get('review_id')
+        return get_object_or_404(Review, id=review_id)
+
+    def get_queryset(self):
+        return self.get_review().comments.all()
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user, review=self.get_review())
+        
+        
 class CategoryViewSet(viewsets.ModelViewSet):
     """Вьюсет для Category."""
     queryset = Category.objects.all()
@@ -132,3 +178,4 @@ class UserRegistrationViewSet(mixins.CreateModelMixin,
             recipient_list=(user.email,),
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
+
