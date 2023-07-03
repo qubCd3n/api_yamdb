@@ -4,6 +4,14 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
+from .permissions import (IsAdmin, IsAdminOrReadOnly,
+                          IsAdminOrModeratorOrOwnerOrReadOnly)
+
+from .serializers import (CategorySerializer, GenreSerializer, TitleSerializer,
+                          TokenReceiveSerializer, UserRegistrationSerializer,
+                          UserSerializer, ReviewSerializer, CommentSerializer,)
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Category, Genre, Review, Title
@@ -22,6 +30,7 @@ User = get_user_model()
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    """Вьюсет для User."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated, IsAdmin)
@@ -47,6 +56,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class TokenReceiveViewSet(mixins.CreateModelMixin,
                           viewsets.GenericViewSet):
+    """Вьюсет для Token."""
     queryset = User.objects.all()
     permission_classes = (permissions.AllowAny, )
     serializer_class = TokenReceiveSerializer
@@ -68,6 +78,7 @@ class TokenReceiveViewSet(mixins.CreateModelMixin,
 
 class UserRegistrationViewSet(mixins.CreateModelMixin,
                               viewsets.GenericViewSet):
+    """Вьюсет для UserRegistration."""
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = (permissions.AllowAny,)
@@ -122,8 +133,8 @@ class CommentViewSet():
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, review=self.get_review())
-        
-     
+
+
 class CategoryViewSet(viewsets.ModelViewSet):
     """Вьюсет для Category."""
     queryset = Category.objects.all()
@@ -143,3 +154,25 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = [IsAdminOrReadOnly]
+    
+    
+class UserRegistrationViewSet(mixins.CreateModelMixin,
+                              viewsets.GenericViewSet):
+    "Вьюсет для регистрации."
+    queryset = User.objects.all()
+    serializer_class = UserRegistrationSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def create(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user, _ = User.objects.get_or_create(**serializer.validated_data)
+        confirmation_code = default_token_generator.make_token(user)
+        print(confirmation_code)
+        send_mail(
+            subject='Код подтверждения.',
+            message=f'Код подтверждения: {confirmation_code}',
+            from_email=EMAIL,
+            recipient_list=(user.email,),
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)

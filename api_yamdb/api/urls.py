@@ -5,11 +5,20 @@ from .views import (CategoryViewSet, CommentViewSet, GenreViewSet,
                     ReviewsViewSet, TitleViewSet, TokenReceiveViewSet,
                     UserRegistrationViewSet, UserViewSet)
 
-router = DefaultRouter()
+app_name = 'api'
 
+router = DefaultRouter()
 router.register('categories', CategoryViewSet, basename='categories')
 router.register('genres', GenreViewSet, basename='genres')
 router.register('titles', TitleViewSet, basename='titles')
+# router.register(
+#     r'titles/(?P<title_id>\d+)/reviews', ReviewsViewSet, basename='review'
+# )
+# router.register(
+#     r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
+#     CommentViewSet,
+#    basename='comment'
+# )
 
 urlpatterns = [
     path('', include(router.urls)),

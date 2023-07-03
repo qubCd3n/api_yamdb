@@ -161,3 +161,4 @@ class GenreTitle(models.Model):
             'модель связи жанров и произведений'
         )
     )
+
