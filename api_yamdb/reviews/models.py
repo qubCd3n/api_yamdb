@@ -20,7 +20,7 @@ class Review(models.Model):
     # on_delete=models.CASCADE,
     #  related_name='reviews',
     #  verbose_name='Произведение',
-   # )
+    # )
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
     score = models.PositiveSmallIntegerField(
         'Рейтинг',
@@ -60,9 +60,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
-from .validators import max_length_validator
-from users.models import User
-from api_yamdb.settings import VALUE_MAX_VAL, VALUE_MIN_VAL
+
 
 class Category(models.Model):
     name = models.CharField(
@@ -139,4 +137,3 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
-
