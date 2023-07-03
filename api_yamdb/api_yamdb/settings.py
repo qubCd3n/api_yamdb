@@ -115,10 +115,12 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 5,
 }
+
 # Нормальный адресс?
 EMAIL = 'yamdb@support.com'
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
+
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -133,6 +135,7 @@ ROLES = (
     (MODERATOR, 'moderator'),
     (ADMIN, 'admin'),
 )
+
 
 VALUE_MIN_VAL = 1
 VALUE_MAX_VAL = 10

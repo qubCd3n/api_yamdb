@@ -8,6 +8,7 @@ class User(AbstractUser):
     username = models.CharField(
         verbose_name='Имя пользователя',
         max_length=150,
+        max_length=100,
         unique=True,
         validators=[
             RegexValidator(

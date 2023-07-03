@@ -19,6 +19,7 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           TokenReceiveSerializer, UserRegistrationSerializer,
                           UserSerializer)
 
+
 User = get_user_model()
 
 

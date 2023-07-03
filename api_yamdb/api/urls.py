@@ -24,4 +24,3 @@ urlpatterns = [
     path('', include(router.urls)),
     path('auth/token/', TokenReceiveViewSet.as_view({'post': 'create'}),),
     path('auth/signup/', UserRegistrationViewSet.as_view({'post': 'create'}),),
-]
