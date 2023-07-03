@@ -11,6 +11,7 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Сериализатер для пользователя."""
 
     class Meta:
         model = User
@@ -25,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    """Сериализатер для регистрации пользователя."""
     username = serializers.RegexField(r'^[\w.@+-]+$', max_length=150)
     email = serializers.EmailField(max_length=150)
 
