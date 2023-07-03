@@ -1,9 +1,10 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from users.models import User
+
+from api_yamdb.settings import VALUE_MAX_VAL, VALUE_MIN_VAL
 
 from .validators import max_length_validator
-from users.models import User
-from api_yamdb.settings import VALUE_MAX_VAL, VALUE_MIN_VAL
 
 
 class Review(models.Model):
@@ -63,6 +64,7 @@ class Comment(models.Model):
 
 
 class Category(models.Model):
+    """Категории призведений."""
     name = models.CharField(
         max_length=256,
         verbose_name='Название',
@@ -84,6 +86,7 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
+    """Жанры произведений."""
     name = models.CharField(
         max_length=256,
         verbose_name='Название',
@@ -101,6 +104,7 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
+    """Произведения."""
     name = models.CharField(
         max_length=256,
         verbose_name='Название',
@@ -137,3 +141,24 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class GenreTitle(models.Model):
+    """Связь Жанр-Произведение."""
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.CASCADE,
+        verbose_name=(
+            'Название жанра,'
+            'модель связи жанров и произведений'
+        )
+    )
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        verbose_name=(
+            'Название произведения,'
+            'модель связи жанров и произведений'
+        )
+    )
+

@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status, filters, mixins, permissions
+from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
@@ -12,15 +12,19 @@ from .permissions import (IsAdmin, IsAdminOrReadOnly,
 from .serializers import (CategorySerializer, GenreSerializer, TitleSerializer,
                           TokenReceiveSerializer, UserRegistrationSerializer,
                           UserSerializer, ReviewSerializer, CommentSerializer,)
-
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework.decorators import action
-from django.contrib.auth import get_user_model
+from reviews.models import Category, Genre, Review, Title
 
 from api_yamdb.settings import EMAIL
-from reviews.models import Category, Genre, Title, Review
 
+from .permissions import (IsAdmin, IsAdminOrModeratorOrOwnerOrReadOnly,
+                          IsAdminOrReadOnly, IsAuthenticated,
+                          IsAuthenticatedOrReadOnly)
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, ReviewSerializer, TitleSerializer,
+                          TokenReceiveSerializer, UserRegistrationSerializer,
+                          UserSerializer)
 
 User = get_user_model()
 
@@ -150,8 +154,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = [IsAdminOrReadOnly]
-
-
+    
+    
 class UserRegistrationViewSet(mixins.CreateModelMixin,
                               viewsets.GenericViewSet):
     "Вьюсет для регистрации."
