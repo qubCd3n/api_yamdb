@@ -1,11 +1,11 @@
 
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
+from rest_framework import serializers
+from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
-from reviews.models import Category, Genre, Title, Comment, Review
-from api_yamdb.settings import VALUE_MAX_VAL, VALUE_MIN_VAL
 
+from api_yamdb.settings import VALUE_MAX_VAL, VALUE_MIN_VAL
 
 User = get_user_model()
 
@@ -71,6 +71,8 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         exlude = ['id']
+        fields = '__all__'
+
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -79,12 +81,13 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         exlude = ['id']
+        fields = '__all__'
 
 
 class TitleSerializer(serializers.ModelSerializer):
     """Серилиазатор Title."""
 
-    categoty = CategorySerializer(read_only=True)
+    category = CategorySerializer(read_only=True)
     genre = GenreSerializer(many=True, read_only=True)
     rating = serializers.FloatField(read_only=True)
 
@@ -96,6 +99,7 @@ class TitleSerializer(serializers.ModelSerializer):
             'category',
             'genre',
             'description',
+            'raiting',
         )
 
 

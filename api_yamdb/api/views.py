@@ -13,8 +13,7 @@ from reviews.models import Category, Genre, Review, Title
 from api_yamdb.settings import EMAIL
 
 from .permissions import (IsAdmin, IsAdminOrModeratorOrOwnerOrReadOnly,
-                          IsAdminOrReadOnly, IsAuthenticated,
-                          IsAuthenticatedOrReadOnly)
+                          IsAdminOrReadOnly)
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, TitleSerializer,
                           TokenReceiveSerializer, UserRegistrationSerializer,
@@ -93,7 +92,7 @@ class UserRegistrationViewSet(mixins.CreateModelMixin,
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class ReviewsViewSet():
+class ReviewsViewSet(viewsets.ModelViewSet):
     """Вьюсет для ReviewSerializer."""
     serializer_class = ReviewSerializer
     permission_classes = (
@@ -111,7 +110,7 @@ class ReviewsViewSet():
         serializer.save(author=self.request.user, title=self.get_title())
 
 
-class CommentViewSet():
+class CommentViewSet(viewsets.ModelViewSet):
     """Вьюсет для CommentSerializer."""
     serializer_class = CommentSerializer
     permission_classes = (
