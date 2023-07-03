@@ -1,20 +1,12 @@
 from datetime import datetime
+
+from django.contrib.auth import get_user_model
 from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
-from django.contrib.auth import get_user_model
-from reviews.models import (
-    Title,
-    Genre,
-    Category,
-    Comment,
-    Review,
-)
-from rest_framework.serializers import (
-    ModelSerializer,
-    SlugRelatedField,
-    ValidationError,
-)
+from rest_framework.serializers import (ModelSerializer, SlugRelatedField,
+                                        ValidationError)
+from reviews.models import Category, Comment, Genre, Review, Title
 
 User = get_user_model()
 

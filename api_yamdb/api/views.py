@@ -1,32 +1,25 @@
-from rest_framework import viewsets, mixins, filters, permissions, status
 from django.contrib.auth import get_user_model
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.tokens import default_token_generator
-from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import AccessToken
+from reviews.models import Category, Genre, Review, Title
+
 from api_yamdb.settings import EMAIL
-from reviews.models import Title, Genre, Category, Review, Title
-from .permissions import (
-    IsAdmin,
-    IsAdminOrModeratorOrOwnerOrReadOnly,
-    IsAdminOrReadOnly,
-)
-from .serializers import (
-    TitleWriteSerializer,
-    TitleReadSerializer,
-    GenreSerializer,
-    CategorySerializer,
-    CommentSerializer,
-    ReviewSerializer,
-    UserRegistrationSerializer,
-    UserSerializer,
-    TokenReceiveSerializer,
-)
+
 from .mixins import CreateDestroyListViewSet
+from .permissions import (IsAdmin, IsAdminOrModeratorOrOwnerOrReadOnly,
+                          IsAdminOrReadOnly)
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, ReviewSerializer,
+                          TitleReadSerializer, TitleWriteSerializer,
+                          TokenReceiveSerializer, UserRegistrationSerializer,
+                          UserSerializer)
 
 User = get_user_model()
 

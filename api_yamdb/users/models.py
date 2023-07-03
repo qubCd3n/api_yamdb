@@ -1,7 +1,8 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models
-from api_yamdb.settings import ROLES, USER, ADMIN, MODERATOR
 from django.core.validators import RegexValidator
+from django.db import models
+
+from api_yamdb.settings import ADMIN, MODERATOR, ROLES, USER
 
 
 class User(AbstractUser):
