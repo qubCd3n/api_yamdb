@@ -70,6 +70,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
+        fields = '__all__'
         exlude = ['id']
 
 
@@ -78,13 +79,14 @@ class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genre
+        fields = '__all__'
         exlude = ['id']
 
 
 class TitleSerializer(serializers.ModelSerializer):
     """Серилиазатор Title."""
 
-    categoty = CategorySerializer(read_only=True)
+    category = CategorySerializer(read_only=True)
     genre = GenreSerializer(many=True, read_only=True)
     rating = serializers.FloatField(read_only=True)
 
@@ -96,6 +98,7 @@ class TitleSerializer(serializers.ModelSerializer):
             'category',
             'genre',
             'description',
+            'rating',
         )
 
 
