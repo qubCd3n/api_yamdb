@@ -7,7 +7,6 @@ from django.core.validators import RegexValidator
 class User(AbstractUser):
     username = models.CharField(
         verbose_name='Имя пользователя',
-        max_length=150,
         max_length=100,
         unique=True,
         validators=[
@@ -16,35 +15,30 @@ class User(AbstractUser):
             )
         ],
     )
-
     email = models.EmailField(
         verbose_name='Почта',
         max_length=254,
         unique=True,
     )
-
     first_name = models.CharField(
         verbose_name='Имя',
         max_length=150,
         blank=True,
         null=True,
     )
-
     last_name = models.CharField(
         verbose_name='Фамилия',
         max_length=150,
         blank=True,
         null=True,
     )
-
     bio = models.TextField(
         verbose_name='Биография',
         blank=True,
         null=True,
     )
-
     role = models.CharField(
-        verbose_name='Полномочия',
+        verbose_name='Роль пользователя',
         choices=ROLES,
         default=USER,
         max_length=10,
