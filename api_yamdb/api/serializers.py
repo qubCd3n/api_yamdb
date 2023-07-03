@@ -1,12 +1,9 @@
 
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer, ValidationError
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
-
-from rest_framework.serializers import ModelSerializer, ValidationError
 from users.models import User
-from reviews.models import Cathegory, Genre, Title, Comment, Review
+from reviews.models import Category, Genre, Title, Comment, Review
 from api_yamdb.settings import VALUE_MAX_VAL, VALUE_MIN_VAL
 
 
@@ -14,6 +11,7 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Сериализатер для пользователя."""
 
     class Meta:
         model = User
@@ -28,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    """Сериализатер для регистрации пользователя."""
     username = serializers.RegexField(r'^[\w.@+-]+$', max_length=150)
     email = serializers.EmailField(max_length=150)
 
@@ -70,7 +69,7 @@ class CategorySerializer(serializers.ModelSerializer):
     """Серилиазатор Category."""
 
     class Meta:
-        model = Cathegory
+        model = Category
         exlude = ['id']
 
 
@@ -98,9 +97,9 @@ class TitleSerializer(serializers.ModelSerializer):
             'genre',
             'description',
         )
-        
-        
-   class ReviewSerializer(serializers.ModelSerializer):
+
+
+class ReviewSerializer(serializers.ModelSerializer):
     """Серилизатор Review."""
     author = serializers.SlugRelatedField(
         default=serializers.CurrentUserDefault(),
@@ -131,5 +130,4 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         read_only_fields = ('author', 'review')
-        exclude = ('review',)     
-
+        exclude = ('review',)

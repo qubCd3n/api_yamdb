@@ -4,10 +4,15 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, filters, mixins, permissions
 from rest_framework.decorators import action
-from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminOrModeratorOrOwnerOrReadOnly
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
+from .permissions import (IsAdmin, IsAdminOrReadOnly,
+                          IsAdminOrModeratorOrOwnerOrReadOnly)
+
 from .serializers import (CategorySerializer, GenreSerializer, TitleSerializer,
                           TokenReceiveSerializer, UserRegistrationSerializer,
                           UserSerializer, ReviewSerializer, CommentSerializer,)
+
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.decorators import action
@@ -124,7 +129,7 @@ class CommentViewSet():
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, review=self.get_review())
-  
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     """Вьюсет для Category."""
@@ -149,6 +154,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class UserRegistrationViewSet(mixins.CreateModelMixin,
                               viewsets.GenericViewSet):
+    "Вьюсет для регистрации."
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = (permissions.AllowAny,)
@@ -166,4 +172,3 @@ class UserRegistrationViewSet(mixins.CreateModelMixin,
             recipient_list=(user.email,),
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
-
