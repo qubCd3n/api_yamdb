@@ -6,12 +6,6 @@ from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
-from .permissions import (IsAdmin, IsAdminOrReadOnly,
-                          IsAdminOrModeratorOrOwnerOrReadOnly)
-
-from .serializers import (CategorySerializer, GenreSerializer, TitleSerializer,
-                          TokenReceiveSerializer, UserRegistrationSerializer,
-                          UserSerializer, ReviewSerializer, CommentSerializer,)
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Category, Genre, Review, Title
@@ -19,12 +13,12 @@ from reviews.models import Category, Genre, Review, Title
 from api_yamdb.settings import EMAIL
 
 from .permissions import (IsAdmin, IsAdminOrModeratorOrOwnerOrReadOnly,
-                          IsAdminOrReadOnly, IsAuthenticated,
-                          IsAuthenticatedOrReadOnly)
+                          IsAdminOrReadOnly)
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, TitleSerializer,
                           TokenReceiveSerializer, UserRegistrationSerializer,
                           UserSerializer)
+
 
 User = get_user_model()
 
@@ -99,7 +93,7 @@ class UserRegistrationViewSet(mixins.CreateModelMixin,
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class ReviewsViewSet():
+class ReviewsViewSet(viewsets.ModelViewSet):
     """Вьюсет для ReviewSerializer."""
     serializer_class = ReviewSerializer
     permission_classes = (
@@ -117,7 +111,7 @@ class ReviewsViewSet():
         serializer.save(author=self.request.user, title=self.get_title())
 
 
-class CommentViewSet():
+class CommentViewSet(viewsets.ModelViewSet):
     """Вьюсет для CommentSerializer."""
     serializer_class = CommentSerializer
     permission_classes = (
