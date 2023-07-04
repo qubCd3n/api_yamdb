@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+from .validators import year_validator
+
 User = get_user_model()
 
 
@@ -27,13 +29,21 @@ class Title(models.Model):
                                    blank=False,
                                    verbose_name='Жанры')
     name = models.CharField(max_length=256, verbose_name='Название')
-    year = models.IntegerField(verbose_name='Год создания')
+    year = models.IntegerField(
+        validators=[year_validator],
+        verbose_name='Год создания',
+        null=True,
+        blank=True,
+    )
     description = models.TextField(null=True,
                                    blank=True,
                                    verbose_name='Описание')
 
     class Meta:
-        unique_together = [('name', 'year', 'category')]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'year', 'category'], name='unique_title')
+        ]
 
 
 class TitleGenre(models.Model):
@@ -67,6 +77,7 @@ class Review(models.Model):
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
+        ordering = ['-pub_date']
 
         constraints = [
             models.UniqueConstraint(
