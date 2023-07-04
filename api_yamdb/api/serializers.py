@@ -1,7 +1,5 @@
-from datetime import datetime
-
 from django.contrib.auth import get_user_model
-from django.db.models import Avg
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import (ModelSerializer, SlugRelatedField,
@@ -36,7 +34,7 @@ class TitleWriteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_year(self, year):
-        present_year = datetime.now().year
+        present_year = timezone.now().year
         if year > present_year:
             raise serializers.ValidationError(
                 'Год выпуска фильма не может быть больше текущего года!')
@@ -48,15 +46,11 @@ class TitleWriteSerializer(serializers.ModelSerializer):
 class TitleReadSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     genre = GenreSerializer(many=True)
-    rating = serializers.SerializerMethodField()
+    rating = serializers.FloatField()
 
     class Meta:
         model = Title
         fields = '__all__'
-
-    def get_rating(self, obj):
-        rating = obj.reviews.aggregate(score=Avg('score'))
-        return rating.get('score')
 
 
 class ReviewSerializer(ModelSerializer):
@@ -122,14 +116,14 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def validate(self, data):
         username = data.get('username')
         email = data.get('email')
-        if (User.objects.filter(username=username).exists()
-           and not User.objects.filter(email=email).exists()):
+        user_obj_email = (User.objects.filter(email=email).exists())
+        user_obj_username = User.objects.filter(username=username).exists()
+        if user_obj_username and not user_obj_email:
             raise serializers.ValidationError(
                 'Использовать \'username\' зарегистрированного'
                 ' пользователя и незанятый \'email\' запрещено'
             )
-        if (User.objects.filter(email=email).exists()
-           and not User.objects.filter(username=username).exists()):
+        if user_obj_email and not user_obj_username:
             raise serializers.ValidationError(
                 'Использовать \'email\' зарегистрированного пользователя'
                 ' и незанятый \'username\' запрещено'

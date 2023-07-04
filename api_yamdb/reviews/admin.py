@@ -32,7 +32,7 @@ class TitleAdmin(admin.ModelAdmin):
     list_editable = ('name', 'year')
 
     def display_genres(self, obj):
-        return ", ".join([genre.name for genre in obj.genre.all()])
+        return ", ".join(obj[4])
 
     def category_name(self, obj):
         return obj.category.name

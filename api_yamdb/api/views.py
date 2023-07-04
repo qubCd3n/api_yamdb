@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, status, viewsets
@@ -12,6 +13,7 @@ from reviews.models import Category, Genre, Review, Title
 
 from api_yamdb.settings import EMAIL
 
+from .filters import TitleFilter
 from .mixins import CreateDestroyListViewSet
 from .permissions import (IsAdmin, IsAdminOrModeratorOrOwnerOrReadOnly,
                           IsAdminOrReadOnly)
@@ -25,10 +27,10 @@ User = get_user_model()
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.annotate(rating=Avg('reviews__score'))
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('name', 'year')
+    filterset_class = TitleFilter
     http_method_names = ('get', 'post', 'patch', 'delete', )
 
     def get_serializer_class(self):
@@ -37,32 +39,17 @@ class TitleViewSet(viewsets.ModelViewSet):
         return TitleReadSerializer
 
     def get_queryset(self):
-        queryset = Title.objects.all()
-        genre_slug = self.request.query_params.get('genre')
-        category__slug = self.request.query_params.get('category')
-        if genre_slug is not None:
-            queryset = queryset.filter(genre__slug=genre_slug)
-        if category__slug is not None:
-            queryset = queryset.filter(category__slug=category__slug)
-        return queryset
+        return super().get_queryset()
 
 
 class GenreViewSet(CreateDestroyListViewSet):
     queryset = Genre.objects.all()
-    permission_classes = (IsAdminOrReadOnly,)
     serializer_class = GenreSerializer
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('=name',)
-    lookup_field = 'slug'
 
 
 class CategoryViewSet(CreateDestroyListViewSet):
     queryset = Category.objects.all()
-    permission_classes = (IsAdminOrReadOnly,)
     serializer_class = CategorySerializer
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('=name',)
-    lookup_field = 'slug'
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

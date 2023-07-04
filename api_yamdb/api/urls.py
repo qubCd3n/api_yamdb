@@ -25,10 +25,10 @@ urlpatterns = [
     path('', include(router.urls)),
     path(
         'auth/token/',
-        TokenReceiveViewSet.as_view({'post': 'create'}),
+        TokenReceiveViewSet.as_view({'post': 'create'}, name='token'),
     ),
     path(
         'auth/signup/',
-        UserRegistrationViewSet.as_view({'post': 'create'}),
+        UserRegistrationViewSet.as_view({'post': 'create'}, name='user'),
     ),
 ]
