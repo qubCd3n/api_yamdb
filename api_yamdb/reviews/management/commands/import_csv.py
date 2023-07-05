@@ -5,10 +5,10 @@ from datetime import datetime
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from django.utils import timezone
-from reviews.models import Category, Comment, Genre, GenreTitle, Review, Title
-from users.models import User
 
 from api_yamdb.settings import BASE_DIR
+from reviews.models import Category, Comment, Genre, Review, Title
+from users.models import User
 
 data_folder = os.path.join(BASE_DIR, 'static/data/')
 titles_file = 'titles.csv'
@@ -87,10 +87,9 @@ class Command(BaseCommand):
                 genre = Genre.objects.get(id=genre_id)
                 title = Title.objects.get(id=title_id)
                 if genre and title:
-                    title_genre_instance, _ = GenreTitle.objects.get_or_create(
+                    title_genre_instance, _ = Title.objects.get_or_create(
                         id=id,
                         genre=genre,
-                        title=title
                     )
                     obj_count += 1
         self.stdout.write(

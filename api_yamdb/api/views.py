@@ -9,9 +9,9 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
-from reviews.models import Category, Genre, Review, Title
 
 from api_yamdb.settings import EMAIL
+from reviews.models import Category, Genre, Review, Title
 
 from .filters import TitleFilter
 from .mixins import CreateDestroyListViewSet
@@ -37,9 +37,6 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.action in ('create', 'update', 'partial_update'):
             return TitleWriteSerializer
         return TitleReadSerializer
-
-    def get_queryset(self):
-        return super().get_queryset()
 
 
 class GenreViewSet(CreateDestroyListViewSet):
@@ -148,7 +145,6 @@ class UserRegistrationViewSet(mixins.CreateModelMixin,
         serializer.is_valid(raise_exception=True)
         user, _ = User.objects.get_or_create(**serializer.validated_data)
         confirmation_code = default_token_generator.make_token(user)
-        print(confirmation_code)
         send_mail(
             subject='Код подтверждения.',
             message=f'Код подтверждения: {confirmation_code}',

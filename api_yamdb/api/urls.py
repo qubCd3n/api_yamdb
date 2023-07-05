@@ -22,13 +22,13 @@ router.register(
 )
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('v1/', include(router.urls)),
     path(
-        'auth/token/',
+        'v1/auth/token/',
         TokenReceiveViewSet.as_view({'post': 'create'}, name='token'),
     ),
     path(
-        'auth/signup/',
+        'v1/auth/signup/',
         UserRegistrationViewSet.as_view({'post': 'create'}, name='user'),
     ),
 ]

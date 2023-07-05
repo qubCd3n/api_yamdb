@@ -32,24 +32,11 @@ class TitleAdmin(admin.ModelAdmin):
     list_editable = ('name', 'year')
 
     def display_genres(self, obj):
-        return ", ".join(obj[4])
+        genre_list = obj.genre.all().values_list('name', flat=True)
+        return ", ".join(genre_list)
 
     def category_name(self, obj):
         return obj.category.name
-
-
-class TitleGenreAdmin(admin.ModelAdmin):
-    list_display = ('pk',
-                    'title_name',
-                    'genre_name',
-                    )
-    search_fields = ('title_name', 'genre_name')
-
-    def genre_name(self, obj):
-        return obj.genre.name
-
-    def title_name(self, obj):
-        return obj.title.name
 
 
 class ReviewAdmin(admin.ModelAdmin):
@@ -68,7 +55,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 admin.site.register(Title, TitleAdmin)
 admin.site.register(Genre, GenreAdmin)
+admin.site.register(TitleGenre, )
 admin.site.register(Category, CategoryAdmin)
-admin.site.register(TitleGenre, TitleGenreAdmin)
 admin.site.register(Review, ReviewAdmin)
 admin.site.register(Comment, CommentAdmin)
