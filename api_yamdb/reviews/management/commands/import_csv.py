@@ -5,10 +5,10 @@ from datetime import datetime
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from django.utils import timezone
-
-from api_yamdb.settings import BASE_DIR
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
+
+from api_yamdb.settings import BASE_DIR
 
 data_folder = os.path.join(BASE_DIR, 'static/data/')
 titles_file = 'titles.csv'
