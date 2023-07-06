@@ -25,7 +25,6 @@ class Title(models.Model):
                                  on_delete=models.SET_NULL,
                                  verbose_name='Категория')
     genre = models.ManyToManyField(Genre,
-                                   through='TitleGenre',
                                    blank=False,
                                    verbose_name='Жанры')
     name = models.CharField(max_length=256, verbose_name='Название')
@@ -44,15 +43,6 @@ class Title(models.Model):
             models.UniqueConstraint(
                 fields=['name', 'year', 'category'], name='unique_title')
         ]
-
-
-class TitleGenre(models.Model):
-    title = models.ForeignKey(Title,
-                              on_delete=models.CASCADE,
-                              verbose_name='Произведение')
-    genre = models.ForeignKey(Genre,
-                              on_delete=models.CASCADE,
-                              verbose_name='Жанр')
 
 
 class Review(models.Model):
