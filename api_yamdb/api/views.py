@@ -12,7 +12,6 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from api_yamdb.settings import EMAIL
 from reviews.models import Category, Genre, Review, Title
-
 from .filters import TitleFilter
 from .mixins import CreateDestroyListViewSet
 from .permissions import (IsAdmin, IsAdminOrModeratorOrOwnerOrReadOnly,
